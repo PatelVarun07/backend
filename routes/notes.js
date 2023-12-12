@@ -78,6 +78,7 @@ routes.post(
 	async (req, res) => {
 		// this syntax is used to add the notes which contain the id of the
 		// console.log(req.files)
+		// todo : use ifelse so if there is an image to hi image adding run ho
 		const imagarr = req.files;
 		let glaryimagepath = imagarr.GaleryImage.map((images) => images);
 
@@ -134,28 +135,16 @@ routes.put("/update/:id", upload, fetchuser, async (req, res) => {
 
 	// to update not we have to firstly find that note we also have to check that the note which is going to chang is belong to the same person which created the note
 	//  after all the authentication we allow the user to update the note
+	// todo : agar image na ho to image addin vala code run na ho our pehale vali image deksake
 	cloudinary.config({
 		cloud_name: "djaqgemac",
 		api_key: 165246311414971,
 		api_secret: "0XV_6ICyrtNUmJurmOVTSywEliw",
 	});
-	const imagarr = req.files;
+	console.log(req.files)
+	if(!req.files == undefined){
+		const imagarr = req.files;
 		let glaryimagepath = imagarr.GaleryImage.map((images) => images);
-	
-	
-	
-	const { etitle, edescription, etags } = req.body;
-	try {
-		const UpdateNote = {};
-		if (etitle) {
-			UpdateNote.title = etitle;
-		}
-		if (edescription) {
-			UpdateNote.description = edescription;
-		}
-		if (etags) {
-			UpdateNote.tag = etags;
-		}
 		if (imagarr.TitleImage !== []) {
 			const NewTitleB64 = Buffer.from(
 				imagarr.TitleImage[0].buffer
@@ -177,6 +166,23 @@ routes.put("/update/:id", upload, fetchuser, async (req, res) => {
 			}
 			UpdateNote.GaleryImage = CloudGalaryImage
 		}
+	}
+	
+	
+	
+	const { etitle, edescription, etags } = req.body;
+	try {
+		const UpdateNote = {};
+		if (etitle) {
+			UpdateNote.title = etitle;
+		}
+		if (edescription) {
+			UpdateNote.description = edescription;
+		}
+		if (etags) {
+			UpdateNote.tag = etags;
+		}
+		
 		let note = await Notes.findById(req.params.id);
 		if (!note) {
 			res.status(404).send(" Note is Not Found");
