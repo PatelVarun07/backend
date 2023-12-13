@@ -141,18 +141,18 @@ routes.put("/update/:id", upload, fetchuser, async (req, res) => {
 		api_key: 165246311414971,
 		api_secret: "0XV_6ICyrtNUmJurmOVTSywEliw",
 	});
-	console.log(req.files)
-	if(!req.files == undefined){
+	console.log(req.files);
+	if (!req.files == undefined) {
 		const imagarr = req.files;
 		let glaryimagepath = imagarr.GaleryImage.map((images) => images);
 		if (imagarr.TitleImage !== []) {
-			const NewTitleB64 = Buffer.from(
-				imagarr.TitleImage[0].buffer
-			).toString("base64");
+			const NewTitleB64 = Buffer.from(imagarr.TitleImage[0].buffer).toString(
+				"base64"
+			);
 			let NewTitledataURI =
 				"data:" + imagarr.TitleImage[0].mimetype + ";base64," + NewTitleB64;
-				const  TitleImgResponce = await handleCloudUpload(NewTitledataURI)
-				UpdateNote.TitleImage = TitleImgResponce.secure_url
+			const TitleImgResponce = await handleCloudUpload(NewTitledataURI);
+			UpdateNote.TitleImage = TitleImgResponce.secure_url;
 		}
 		if (imagarr.GaleryImage !== []) {
 			const CloudGalaryImage = [];
@@ -164,12 +164,10 @@ routes.put("/update/:id", upload, fetchuser, async (req, res) => {
 				CloudGalaryImage.push(CloudGalaryImg.secure_url);
 				// console.log(CloudGalaryImage)
 			}
-			UpdateNote.GaleryImage = CloudGalaryImage
+			UpdateNote.GaleryImage = CloudGalaryImage;
 		}
 	}
-	
-	
-	
+
 	const { etitle, edescription, etags } = req.body;
 	try {
 		const UpdateNote = {};
@@ -182,7 +180,7 @@ routes.put("/update/:id", upload, fetchuser, async (req, res) => {
 		if (etags) {
 			UpdateNote.tag = etags;
 		}
-		
+
 		let note = await Notes.findById(req.params.id);
 		if (!note) {
 			res.status(404).send(" Note is Not Found");
@@ -231,6 +229,14 @@ routes.delete("/deletenote/:id", fetchuser, async (req, res) => {
 		// console.error(error.message);
 		res.status(500).send("Internal Server Error");
 	}
+});
+routes.get("/queries", fetchuser, async (req, res) => {
+	console.log(req.query.search);
+	const note = await Notes.find({ user:req.user,
+		title:{$regex:req.query.search , $options:"i"}
+	})
+	res.json(note)
+	console.log(note)
 });
 
 module.exports = routes;

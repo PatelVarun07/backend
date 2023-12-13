@@ -292,8 +292,8 @@ routes.post("/resendotp", fetchuser, async (req, res) => {
 		res.status(500).send("Internal Server Error");
 	}
 });
-routes.get('/getallusers' , async (req,res)=>{
-	let user = await Users.find()
+routes.get('/getallusers' ,fetchuser, async (req,res)=>{
+	let user = await Users.find().find({_id : {$ne:req.user}})
 	res.send(user)
 })
 
